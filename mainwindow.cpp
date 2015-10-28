@@ -447,8 +447,17 @@ void MainWindow::startUsbService()
 		return;
 	}
 
+	// Push shim library.
+	args.clear();
+	args << "push";
+	args << QDir(QCoreApplication::applicationDirPath()).absolutePath() + "/shim.so";
+	args << "/data/local/tmp/shim.so";
+	QProcess* pushShimProc = runAdb(args);
+	pushShimProc->waitForFinished();
+
 	args.clear();
 	args << "shell";
+	args << "export LD_PRELOAD=/data/local/tmp/shim.so ; ";
 	args << "/data/local/tmp/bbqscreen";
 	args << "-s";
 	args << "50";
